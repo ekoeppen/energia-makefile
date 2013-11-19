@@ -192,9 +192,10 @@ ENERGIACOREDIR := $(ENERGIADIR)/hardware/msp430/cores/msp430
 ENERGIALIB := .lib/arduino.a
 ENERGIALIBLIBSDIR := $(ENERGIADIR)/hardware/msp430/libraries
 ENERGIALIBLIBSPATH := $(foreach lib, $(LIBRARIES), \
-	 $(HOME)/energia_sketchbook/libraries/$(lib)/ $(HOME)/energia_sketchbook/libraries/$(lib)/utility/ $(ENERGIADIR)/libraries/$(lib)/ $(ENERGIADIR)/libraries/$(lib)/utility/ $(ENERGIACOREDIR)/libraries/$(lib) )
+	 $(HOME)/energia_sketchbook/libraries/$(lib)/ $(HOME)/energia_sketchbook/libraries/$(lib)/utility/ $(ENERGIALIBLIBSDIR)/$(lib)/ $(ENERGIALIBLIBSDIR)/$(lib)/utility/ $(ENERGIACOREDIR)/libraries/$(lib) )
 ENERGIALIBOBJS := $(foreach dir, $(ENERGIACOREDIR) $(ENERGIALIBLIBSPATH), \
 	$(patsubst %, .lib/%.o, $(wildcard $(addprefix $(dir)/, *.c *.cpp))))
+#$(error $(ENERGIALIBLIBSPATH) "###" $(LIBRARIES) "###" $(ENERGIALIBOBJS))
 
 
 # no board?
@@ -246,8 +247,8 @@ CPPFLAGS += -I$(ENERGIADIR)/hardware/msp430/variants/$(BOARD_BUILD_VARIANT)/
 CPPFLAGS += -I$(HOME)/energia_sketchbook/hardware/msp430/variants/$(BOARD_BUILD_VARIANT)/
 CPPFLAGS += $(addprefix -I$(HOME)/energia_sketchbook/libraries/,  $(LIBRARIES))
 CPPFLAGS += $(patsubst %, -I$(HOME)/energia_sketchbook/libraries/%/utility,  $(LIBRARIES))
-CPPFLAGS += $(addprefix -I$(ENERGIADIR)/libraries/, $(LIBRARIES))
-CPPFLAGS += $(patsubst %, -I$(ENERGIADIR)/libraries/%/utility, $(LIBRARIES))
+CPPFLAGS += $(addprefix -I$(ENERGIALIBLIBSDIR)/, $(LIBRARIES))
+CPPFLAGS += $(patsubst %, -I$(ENERGIALIBLIBSDIR)/libraries/%/utility, $(LIBRARIES))
 CPPDEPFLAGS = -MMD -MP -MF .dep/$<.dep
 CPPINOFLAGS := -x c++ -include $(ENERGIACOREDIR)/Arduino.h
 MSPDEBUGFLAGS :=  $(MSPDEBUG_PROTOCOL) 'erase' 'load $(TARGET).elf' 'exit'
